@@ -1,0 +1,28 @@
+name: GreatWait delayed callback
+description: Schedule one delayed callback to an existing GreatWait endpoint
+inputs:
+  api_key:
+    description: GreatWait API key scoped to schedules:write for the endpoint's project and environment
+    required: true
+  endpoint:
+    description: Existing GreatWait endpoint ID (ep_...)
+    required: true
+  delay_seconds:
+    description: One-shot delay in whole seconds (1 to 158000000)
+    required: true
+  idempotency_key:
+    description: Caller-owned stable Idempotency-Key, reused only for the identical request
+    required: true
+  data_json:
+    description: Optional JSON value included in the signed callback envelope; never include secrets
+    required: false
+outputs:
+  schedule_id:
+    description: Returned schedule ID; this does not establish callback delivery
+  occurrence_id:
+    description: Returned first occurrence ID; this does not establish callback delivery
+  planned_for:
+    description: Planned UTC callback instant; this does not establish callback delivery
+runs:
+  using: node24
+  main: main.js
