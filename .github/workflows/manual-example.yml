@@ -1,0 +1,38 @@
+name: Schedule callback manually
+on:
+  workflow_dispatch:
+    inputs:
+      endpoint:
+        description: Existing GreatWait endpoint ID in the key's project and environment
+        required: true
+        type: string
+      delay_seconds:
+        description: Whole seconds from 1 to 158000000
+        required: true
+        type: string
+      idempotency_key:
+        description: Stable 16-255 character request key; reuse only with identical inputs
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Schedule once
+        id: greatwait
+        uses: ./
+        with:
+          api_key: ${{ secrets.GREATWAIT_SCHEDULES_WRITE_KEY }}
+          endpoint: ${{ inputs.endpoint }}
+          delay_seconds: ${{ inputs.delay_seconds }}
+          idempotency_key: ${{ inputs.idempotency_key }}
+      - name: Report returned schedule
+        env:
+          SCHEDULE_ID: ${{ steps.greatwait.outputs.schedule_id }}
+        run: |
+          echo "GreatWait returned schedule ${SCHEDULE_ID}; delivery has not been verified."
